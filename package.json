@@ -1,0 +1,34 @@
+{
+  "name": "distill",
+  "description": "Angular-ish direct injection for express apps",
+  "version": "0.0.1",
+  "author": "Andrew Nichols <tandrewnichols@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tandrewnichols/distill.git"
+  },
+  "homepage": "https://github.com/tandrewnichols/distill",
+  "scripts": {
+    "test": "mocha test",
+    "watch": "mocha test -w -R min --suppress-stack"
+  },
+  "dependencies": {
+    "varity": "1.0.1",
+    "underscore": "1.5.2",
+    "file-manifest": "0.0.1"
+  },
+  "devDependencies": {
+    "coffee-script": "1.6.3",
+    "mocha": "git://github.com/tandrewnichols/mocha.git#suppress-stack",
+    "sandboxed-module": "0.3.0",
+    "sinon": "1.7.3",
+    "mocha-given": "0.0.18",
+    "indeed": "1.0.5"
+  },
+  "keywords": [
+    "walker",
+    "file",
+    "recursive"
+  ],
+  "main": "./lib/distill"
+}
