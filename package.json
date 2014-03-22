@@ -15,10 +15,10 @@
   "dependencies": {
     "varity": "1.0.1",
     "underscore": "1.5.2",
-    "file-manifest": "0.0.1"
+    "file-manifest": "0.0.2",
+    "coffee-script": "1.7.1"
   },
   "devDependencies": {
-    "coffee-script": "1.6.3",
     "mocha": "git://github.com/tandrewnichols/mocha.git#suppress-stack",
     "sandboxed-module": "0.3.0",
     "sinon": "1.7.3",
