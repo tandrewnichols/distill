@@ -84,3 +84,49 @@ describe 'controllers', ->
     context 'no config error', ->
       Given -> @withResources.returns false
       Then -> expect(@subject.findResources).to.throw new Error "DistillException: Unable to locate resources in 'resources' and no directory was passed in config."
+
+  describe '.findServices', ->
+    Given -> @path.resolve.withArgs(root, "blah").returns "#{root}/blah"
+    Given -> @path.resolve.withArgs(root, "services").returns "#{root}/services"
+    Given -> @path.resolve.withArgs(root, "lib").returns "#{root}/lib"
+    Given -> @withBlah = @fs.existsSync.withArgs("#{root}/blah")
+    Given -> @withServices = @fs.existsSync.withArgs("#{root}/services")
+    Given -> @withLib = @fs.existsSync.withArgs("#{root}/lib")
+
+    context 'config dir exists and should beat services and lib', ->
+      Given -> @withBlah.returns true
+      Given -> @withServices.returns true
+      Given -> @withLib.returns true
+      When -> @dir = @subject.findServices 'blah'
+      Then -> expect(@dir).to.equal "#{root}/blah"
+
+    context 'services exists and should beat lib', ->
+      Given -> @withBlah.returns false
+      Given -> @withServices.returns true
+      Given -> @withLib.returns true
+      When -> @dir = @subject.findServices 'blah'
+      Then -> expect(@dir).to.equal "#{root}/services"
+
+    context 'lib exists', ->
+      Given -> @withBlah.returns false
+      Given -> @withServices.returns false
+      Given -> @withLib.returns true
+      When -> @dir = @subject.findServices 'blah'
+      Then -> expect(@dir).to.equal "#{root}/lib"
+
+    context 'none exists', ->
+      Given -> @withBlah.returns false
+      Given -> @withServices.returns false
+      Given -> @withLib.returns false
+      Then -> expect(@subject.findServices).with('blah').to.throw new Error "DistillException: Unable to locate services in 'services' or 'lib' and 'blah' from config did not exist."
+
+    context 'no config', ->
+      Given -> @withServices.returns true
+      Given -> @withLib.returns true
+      When -> @dir = @subject.findServices {}
+      Then -> expect(@dir).to.equal "#{root}/services"
+
+    context 'no config error', ->
+      Given -> @withServices.returns false
+      Given -> @withLib.returns false
+      Then -> expect(@subject.findServices).to.throw new Error "DistillException: Unable to locate services in 'services' or 'lib' and no directory was passed in config."

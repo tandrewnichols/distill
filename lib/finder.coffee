@@ -9,6 +9,9 @@ exports.findControllers = (ctrlDir) ->
 exports.findResources = (resourceDir) ->
   return new Finder('resources', resourceDir, ['resources']).find()
 
+exports.findServices = (serviceDir) ->
+  return new Finder('services', serviceDir, ['services', 'lib']).find()
+
 class Finder
   constructor: (@type, @configDir, @list) ->
 
