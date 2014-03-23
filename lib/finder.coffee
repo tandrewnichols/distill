@@ -4,35 +4,23 @@ root = require.main.filename
 _ = require 'underscore'
 
 exports.findControllers = (ctrlDir) ->
-  return new Finder('controllers', ctrlDir, ['controllers', 'routes']).find()
+  return new Finder(ctrlDir, ['controllers', 'routes']).find()
 
 exports.findResources = (resourceDir) ->
-  return new Finder('resources', resourceDir, ['resources'], false).find()
+  return new Finder(resourceDir, ['resources']).find()
 
 exports.findServices = (serviceDir) ->
-  return new Finder('services', serviceDir, ['services', 'lib']).find()
+  return new Finder(serviceDir, ['services', 'lib']).find()
+
+exports.findMiddleware = (middlewareDir) ->
+  return new Finder(middlewareDir, ['middleware']).find()
 
 class Finder
-  constructor: (@type, @configDir, @list, @shouldThrow = true) ->
+  constructor: (@configDir, @list) ->
 
   find: ->
     dir = _([@configDir].concat(@list)).find(@exists)
-    if not dir
-      if @shouldThrow
-        throw new Error "DisitllException: Unable to locate #{@type} in #{@buildLocations()} and #{@buildMsgEnd()}."
-      else return ""
-    return "#{root}/#{dir}"
+    if dir then "#{root}/#{dir}" else ""
     
   exists: (dir) ->
     if /^\//.test(dir) then return fs.existsSync dir else return fs.existsSync(path.resolve root, dir)
-
-  buildLocations: ->
-    switch @list.length
-      when 1 then "'#{@list[0]}'"
-      when 2 then "'#{@list[0]}' or '#{@list[1]}'"
-      else
-        last = @list.pop()
-        "'#{@list.join('\', \'')}', or '#{last}'"
-
-  buildMsgEnd: ->
-    if @configDir then "'#{@configDir}' from config did not exist" else "no directory was passed in config"

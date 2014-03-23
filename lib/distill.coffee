@@ -1,10 +1,10 @@
-manifestBuilder = require 'file-manifest'
 events = require 'events'
 emitter = new events.EventEmitter()
 finder = require './finder'
 requirer = require './requirer'
 self = exports
 $ = require 'varity'
+
 
 #
 # Possible options:
@@ -17,8 +17,19 @@ exports.config = $ 'of', (config, fn) ->
 
 exports.run = (express, cb) ->
   app = express()
-  controllers = finder.findController(self.config.controllerDir)
+  self.register 'controller', finder.findController(self.config.controllerDir)
+  self.register 'service', finder.findServices(self.config.serviceDir)
+  self.register 'resource', finder.findResources(self.config.resourceDir)
+  self.register 'middleware', finder.findMiddleware(self.config.middlewareDir)
+
+exports.register = (type, list) ->
   _.chain().keys().each (name) ->
-    self.controller name, controllers[name]
+    self[type] name, list[name]
 
 exports.controller = (name, fn) ->
+
+exports.service = (name, fn) ->
+
+exports.resource = (name, fn) ->
+
+exports.middleware = (name, fn) ->
