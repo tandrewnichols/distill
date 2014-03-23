@@ -74,7 +74,7 @@ describe 'controllers', ->
     context 'none exists', ->
       Given -> @withBlah.returns false
       Given -> @withResources.returns false
-      Then -> expect(@subject.findResources).with('blah').to.throw new Error "DistillException: Unable to locate resources in 'resources' and 'blah' from config did not exist."
+      Then -> expect(@subject.findResources()).to.equal ''
 
     context 'no config', ->
       Given -> @withResources.returns true
@@ -83,7 +83,7 @@ describe 'controllers', ->
 
     context 'no config error', ->
       Given -> @withResources.returns false
-      Then -> expect(@subject.findResources).to.throw new Error "DistillException: Unable to locate resources in 'resources' and no directory was passed in config."
+      Then -> expect(@subject.findResources()).to.equal ''
 
   describe '.findServices', ->
     Given -> @path.resolve.withArgs(root, "blah").returns "#{root}/blah"

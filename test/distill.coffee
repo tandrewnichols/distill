@@ -1,7 +1,9 @@
 describe 'distill', ->
-  Given -> @ctrls = spyObj('findControllerDir')
+  Given -> @finder = spyObj('findControllers', 'findServices', 'findResources')
+  Given -> @requirer = spyObj('require')
   Given -> @subject = sandbox 'lib/distill',
-    './controllers': @ctrls
+    './finder': @finder
+    './requirer': @requirer
 
   describe '.config', ->
     context 'with config obj', ->
@@ -15,3 +17,9 @@ describe 'distill', ->
       When -> @subject.config @fn
       Then -> expect(@fn).to.have.been.called
       And -> expect(@subject.config).to.deeply.equal {}
+
+  describe '.run', ->
+    Given -> @finder.findControllers.returns 'controllers'
+    Given -> @finder.findServices.returns 'services'
+    Given -> @finder.findResources.returns 'resources'
+    #Given -> @requirer.require.returns

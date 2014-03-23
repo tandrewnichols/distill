@@ -7,18 +7,20 @@ exports.findControllers = (ctrlDir) ->
   return new Finder('controllers', ctrlDir, ['controllers', 'routes']).find()
 
 exports.findResources = (resourceDir) ->
-  return new Finder('resources', resourceDir, ['resources']).find()
+  return new Finder('resources', resourceDir, ['resources'], false).find()
 
 exports.findServices = (serviceDir) ->
   return new Finder('services', serviceDir, ['services', 'lib']).find()
 
 class Finder
-  constructor: (@type, @configDir, @list) ->
+  constructor: (@type, @configDir, @list, @shouldThrow = true) ->
 
   find: ->
     dir = _([@configDir].concat(@list)).find(@exists)
     if not dir
-      throw new Error "DisitllException: Unable to locate #{@type} in #{@buildLocations()} and #{@buildMsgEnd()}."
+      if @shouldThrow
+        throw new Error "DisitllException: Unable to locate #{@type} in #{@buildLocations()} and #{@buildMsgEnd()}."
+      else return ""
     return "#{root}/#{dir}"
     
   exists: (dir) ->
