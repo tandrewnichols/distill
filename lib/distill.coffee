@@ -17,6 +17,8 @@ exports.config = $ 'of', (config, fn) ->
 
 exports.run = (express, cb) ->
   app = express()
-  definitions = requirer.require finder.findControllers(self.config.controllerDir), finder.findServices(self.config.serviceDir), finder.findResources(self.config.resourceDir)
+  controllers = finder.findController(self.config.controllerDir)
+  _.chain().keys().each (name) ->
+    self.controller name, controllers[name]
 
 exports.controller = (name, fn) ->
