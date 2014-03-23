@@ -3,7 +3,7 @@ emitter = new events.EventEmitter()
 helper = require './helper'
 self = exports
 $ = require 'varity'
-
+extend = require 'config-extend'
 
 #
 # Possible options:
@@ -13,6 +13,11 @@ $ = require 'varity'
 exports.config = $ 'of', (config, fn) ->
   self.config = config || {}
   self.config.configFn = fn if fn
+  self.config.locations =
+    controllers: (self.config.locations.controllers or []).concat ['controllers', 'routes']
+    services: (self.config.locations.services or []).concat ['services', 'lib']
+    resources: (self.config.locations.resources or []).concat ['resources']
+    middleware: (self.config.locations.resources or []).concat ['middleware']
   return self
 
 exports.run = (express, cb) ->
