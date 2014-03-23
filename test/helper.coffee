@@ -4,7 +4,6 @@ describe 'helper', ->
   Given -> @fs = spyObj('existsSync')
   Given -> @path = spyObj('resolve')
   Given -> @manifestBuilder = spyObj 'generate'
-  Given -> @controller = sinon.spy()
   Given -> @subject = sandbox 'lib/helper',
     fs: @fs
     path: @path
@@ -12,7 +11,17 @@ describe 'helper', ->
     'undefined/foo': {}
     'undefined/bar':
       name: 'Bar'
-      controller: @controller
+      controller: 'controller'
+    'undefined/baz':
+      name: 'Baz'
+      middleware: 'middleware'
+    'undefined/quux':
+      name: 'Quux'
+      hello: 'world'
+      foo: 'bar'
+    'undefined/blah':
+      name: 'Blah'
+      some: 'resource'
 
   describe '.find', ->
     Given -> @path.resolve.withArgs(root, "foo").returns "#{root}/foo"
@@ -40,17 +49,34 @@ describe 'helper', ->
 
   describe '.require', ->
     When -> @res = @subject.require 'foo'
+    And -> @fn = @manifestBuilder.generate.getCall(0).args[2]
 
-    context 'no name or controller', ->
-      When -> @fn = @manifestBuilder.generate.getCall(0).args[2]
-      And -> @manifest = @fn {}, 'foo'
+    context 'non-export form', ->
+      When -> @manifest = @fn {}, 'foo'
       Then -> expect(@manifest).to.deeply.equal {}
 
-    context 'name and controller', ->
-      When -> @fn = @manifestBuilder.generate.getCall(0).args[2]
-      And -> @manifest = @fn {}, 'bar'
+    context 'with controller', ->
+      When -> @manifest = @fn {}, 'bar'
       Then -> expect(@manifest).to.deeply.equal
-        Bar: @controller
+        Bar: 'controller'
+
+    context 'with middleware', ->
+      When -> @manifest = @fn {}, 'baz'
+      Then -> expect(@manifest).to.deeply.equal
+        Baz: 'middleware'
+
+    context 'with a service', ->
+      When -> @manifest = @fn {}, 'quux'
+      Then -> expect(@manifest).to.deeply.equal
+        Quux:
+          hello: 'world'
+          foo: 'bar'
+
+    context 'with a resouce', ->
+      When -> @manifest = @fn {}, 'blah'
+      Then -> expect(@manifest).to.deeply.equal
+        Blah:
+          some: 'resource'
 
   describe '.inspect', ->
     When -> @deps = @subject.inspect (foo, bar) ->

@@ -12,8 +12,14 @@ exports.find = (list) ->
 exports.require = (dir) ->
   return manifestBuilder.generate dir, '**/*.js', (manifest, file) ->
     req = require @dir + '/' + file
-    if req.name and req.controller
-      manifest[req.name] = req.controller
+    if req.name
+      if req.controller
+        manifest[req.name] = req.controller
+      else if req.middleware
+        manifest[req.name] = req.middleware
+      else
+        # services and resources
+        manifest[req.name] = _(req).omit('name')
     return manifest
 
 exports.inspect = (fn) ->
