@@ -1,25 +1,31 @@
 describe 'distill', ->
-  Given -> @finder = spyObj('findControllers', 'findServices', 'findResources')
-  Given -> @requirer = spyObj('require')
+  Given -> @helper = spyObj 'find', 'require', 'inspect'
   Given -> @subject = sandbox 'lib/distill',
-    './finder': @finder
-    './requirer': @requirer
+    './helper': @helper
 
   describe '.config', ->
     context 'with config obj', ->
       Given -> @config =
         foo: 'bar'
-      When -> @subject.config @config
+      When -> @res = @subject.config @config
       Then -> expect(@subject.config).to.deeply.equal @config
+      And -> expect(@res).to.equal @subject
 
     context 'with function', ->
       Given -> @fn = sinon.spy()
-      When -> @subject.config @fn
-      Then -> expect(@fn).to.have.been.called
-      And -> expect(@subject.config).to.deeply.equal {}
+      When -> @res = @subject.config @fn
+      Then -> expect(@subject.config).to.deeply.equal
+        configFn: @fn
+      And -> expect(@res).to.equal @subject
+
+    context 'with both', ->
+      Given -> @config =
+        foo: 'bar'
+      Given -> @fn = sinon.spy()
+      When -> @res = @subject.config @config, @fn
+      Then -> expect(@subject.config).to.deeply.equal
+        foo: 'bar'
+        configFn: @fn
+      And -> expect(@res).to.equal @subject
 
   describe '.run', ->
-    Given -> @finder.findControllers.returns 'controllers'
-    Given -> @finder.findServices.returns 'services'
-    Given -> @finder.findResources.returns 'resources'
-    #Given -> @requirer.require.returns

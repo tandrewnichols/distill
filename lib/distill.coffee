@@ -1,7 +1,6 @@
 events = require 'events'
 emitter = new events.EventEmitter()
-finder = require './finder'
-requirer = require './requirer'
+helper = require './helper'
 self = exports
 $ = require 'varity'
 
@@ -13,14 +12,11 @@ $ = require 'varity'
 #   resourceDir
 exports.config = $ 'of', (config, fn) ->
   self.config = config || {}
-  fn?()
+  self.config.configFn = fn if fn
+  return self
 
 exports.run = (express, cb) ->
   app = express()
-  self.register 'controller', finder.findController(self.config.controllerDir)
-  self.register 'service', finder.findServices(self.config.serviceDir)
-  self.register 'resource', finder.findResources(self.config.resourceDir)
-  self.register 'middleware', finder.findMiddleware(self.config.middlewareDir)
 
 exports.register = (type, list) ->
   _.chain().keys().each (name) ->
