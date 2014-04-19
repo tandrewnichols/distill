@@ -1,27 +1,36 @@
 root = require.main.filename
 
 describe 'helper', ->
-  Given -> @fs = spyObj('existsSync')
-  Given -> @path = spyObj('resolve')
+  Given -> @fs = spyObj 'existsSync'
+  Given -> @path = spyObj 'resolve'
   Given -> @manifestBuilder = spyObj 'generate'
-  Given -> @subject = sandbox 'lib/helper',
+  Given -> @injectables =
+    foo: 1
+    bar: 2
+  Given -> @subject = proxyquire '../lib/utils',
     fs: @fs
+    './injectables': @injectables
     path: @path
     'file-manifest': @manifestBuilder
-    'undefined/foo': {}
+    'undefined/foo':
+      '@noCallThru': true
     'undefined/bar':
       name: 'Bar'
       controller: 'controller'
+      '@noCallThru': true
     'undefined/baz':
       name: 'Baz'
       middleware: 'middleware'
+      '@noCallThru': true
     'undefined/quux':
       name: 'Quux'
       hello: 'world'
       foo: 'bar'
+      '@noCallThru': true
     'undefined/blah':
       name: 'Blah'
       some: 'resource'
+      '@noCallThru': true
 
   describe '.find', ->
     Given -> @path.resolve.withArgs(root, "foo").returns "#{root}/foo"
@@ -71,13 +80,19 @@ describe 'helper', ->
         Quux:
           hello: 'world'
           foo: 'bar'
+          '@noCallThru': true
 
     context 'with a resouce', ->
       When -> @manifest = @fn {}, 'blah'
       Then -> expect(@manifest).to.deeply.equal
         Blah:
           some: 'resource'
+          '@noCallThru': true
 
   describe '.inspect', ->
     When -> @deps = @subject.inspect (foo, bar) ->
-    Then -> expect(_.fix(@deps)).to.deeply.equal [ 'foo', 'bar' ]
+    Then -> expect(@deps).to.deeply.equal [ 'foo', 'bar' ]
+
+  describe '.inject', ->
+    When -> @injectables = @subject.inject [ 'foo', 'bar' ]
+    Then -> expect(@injectables).to.deeply.equal [1, 2]

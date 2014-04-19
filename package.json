@@ -16,11 +16,12 @@
     "varity": "1.0.1",
     "underscore": "1.5.2",
     "file-manifest": "0.0.2",
-    "coffee-script": "1.7.1"
+    "coffee-script": "1.7.1",
+    "express": "4.0.x"
   },
   "devDependencies": {
     "mocha": "git://github.com/tandrewnichols/mocha.git#suppress-stack",
-    "sandboxed-module": "0.3.0",
+    "proxyquire": "0.6.0",
     "sinon": "1.7.3",
     "mocha-given": "0.0.18",
     "indeed": "1.0.5"

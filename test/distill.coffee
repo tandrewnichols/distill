@@ -1,7 +1,7 @@
 describe 'distill', ->
-  Given -> @helper = spyObj 'find', 'require', 'inspect'
-  Given -> @subject = sandbox 'lib/distill',
-    './helper': @helper
+  Given -> @utils = spyObj 'find', 'require', 'inspect'
+  Given -> @subject = proxyquire '../lib/distill',
+    './utils': @utils
 
   describe '.config', ->
 
